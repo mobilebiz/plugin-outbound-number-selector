@@ -1,31 +1,101 @@
-# Your custom Twilio Flex Plugin
+# Outbound From Number Selector Plugin
 
-Twilio Flex Plugins allow you to customize the appearance and behavior of [Twilio Flex](https://www.twilio.com/flex). If you want to learn more about the capabilities and how to use the API, check out our [Flex documentation](https://www.twilio.com/docs/flex).
+This plugin customizes the behavior of [Twilio Flex](https://www.twilio.com/flex). Specifically, it adds the option to select an Outbound Caller Id in the new [Outbound Dialpad](https://www.twilio.com/docs/flex/dialpad/use):
 
-## Setup
+![Dialpad Extension](/img/screen_shot.png?raw=true)
 
-Make sure you have [Node.js](https://nodejs.org) as well as [`npm`](https://npmjs.com). We support Node >= 10.12 (and recommend the _even_ versions of Node). Afterwards, install the dependencies by running `npm install`:
+The choices available as CallerId are phone numbers that have already been purchased in the Flex project and are available for use with Voice.
+
+## Configuration
+
+The plugin consists of two parts: the Flex Plugin and the Serverless Function.
+The Serverless Function is called from within the Flex Plugin.
+
+## Setup function
 
 ```bash
-cd 
+% git clone https://github.com/mobilebiz/plugin-outbound-number-selector.git
+% cd plugin-outbound-number-selector
+% cd get-phone-numbers
 
 # If you use npm
-npm install
+% npm install
+# If you use yarn
+% yarn install
+
+# Deploy
+% npm run deploy
+
+...
+
+✔ Serverless project successfully deployed
+
+Deployment Details
+Domain: get-phone-numbers-XXXX-dev.twil.io
+Service:
+   get-phone-numbers (ZS...)
+Environment:
+   dev (ZE...)
+Build SID:
+   ZB...
+Runtime:
+   node14
+View Live Logs:
+   https://www.twilio.com/console/functions/editor/ZS.../environment/ZE...
+Functions:
+   https://get-phone-numbers-XXXX-dev.twil.io/get-phone-numbers
+Assets:
 ```
 
-Next, please install the [Twilio CLI](https://www.twilio.com/docs/twilio-cli/quickstart) by running:
+When the deployment is complete, record the "Domain:" shown in the results. Such as "get-phone-numbers-XXXX-dev.twil.io".
+
+## Setup Flex Plugin
 
 ```bash
-brew tap twilio/brew && brew install twilio
+% cd ..
+% cp .env.sample .env
 ```
 
-Finally, install the [Flex Plugin extension](https://github.com/twilio-labs/plugin-flex/tree/v1-beta) for the Twilio CLI:
+Update the copied .env file with an editor. The contents to be updated are as follows.
+
+| Key                      | Value                                                                  |
+| :----------------------- | :--------------------------------------------------------------------- |
+| FLEX_APP_FUNCTION_DOMAIN | get-phone-numbers-XXXX-dev.twil.io(Change XXXX to your configuration.) |
+
+Once the .env file has been updated, deploy with the following command.
 
 ```bash
-twilio plugins:install @twilio-labs/plugin-flex
+# If you use npm
+% npm install
+# If you use yarn
+% yarn install
 ```
 
-## Development
+## Local test
 
-Run `twilio flex:plugins --help` to see all the commands we currently support. For further details on Flex Plugins refer to our documentation on the [Twilio Docs](https://www.twilio.com/docs/flex/developer/plugins/cli) page.
+```bash
+% npm start
+```
 
+## Build & Deploy
+
+```bash
+# Build & Deploy
+% npm run build && npm run deploy
+```
+
+## Release
+
+Once deployed, you can manually release your plugin via the Flex UI or via
+
+```bash
+twilio flex:plugins:release --plugin plugin-name@version --name "name" --description "description"
+```
+
+Note: Common packages like `React`, `ReactDOM`, `Redux` and `ReactRedux` are not bundled with the build because they are treated as external dependencies so the plugin will depend on Flex to provide them globally.
+
+## Special thanks
+
+In developing this plugin, I have used the following project as a reference. I would like to take this opportunity to thank you.
+
+https://github.com/andrej-s/plugin-dialer-numberui
