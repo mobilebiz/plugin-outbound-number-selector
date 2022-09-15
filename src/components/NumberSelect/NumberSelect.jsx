@@ -38,7 +38,10 @@ const NumberSelect = (props) => {
         });
         setOptions(opts);
         // eslint-disable-next-line react/prop-types
-        props.setDefaultNumber(opts[0].phoneNumber || '');
+        props.setDefaultNumber(
+          defaultNumber ? defaultNumber : opts[0].phoneNumber || '',
+        );
+        // props.setDefaultNumber(opts[0].phoneNumber || '');
         setLoaded(true);
       } catch (err) {
         console.error(
